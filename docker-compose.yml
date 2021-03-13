@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  purchase-service:
+    build:  ./purchases_service
+    ports:
+    - "5000:5000"
+    depends_on:
+      - purchase-db
+    entrypoint: ./entrypoint.sh
+    environment:
+      DB_USER: user
+      DB_HOST: purchase-db
+      DB_PASS: hackme
+      DB_NAME: app-purchase
+
+  purchase-db:
+    restart: always
+    image: postgres
+    ports:
+    - "5433:5432"
+    environment:
+      - POSTGRES_DB=app-purchase
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=hackme
+  
+  shop-service:
+    build: ./shop_service
+    ports: 
+      - "5001:5001"
+    depends_on: 
+      - shop-db
+    entrypoint: ./entrypoint.sh
+    environment:
+      DB_USER: user
+      DB_HOST: shop-db
+      DB_PASS: hackme
+      DB_NAME: app-shop
+      
+  shop-db:
+    restart: always
+    image: postgres
+    ports:
+    - "5432:5432"
+    environment:
+      - POSTGRES_DB=app-shop
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=hackme
+  
