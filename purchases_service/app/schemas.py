@@ -28,3 +28,6 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+check_schema = CheckSchema()
+checks_schema = CheckSchema(many=True)
+purchases_schema = PurchaseSchema(many=True)

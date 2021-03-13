@@ -84,4 +84,11 @@ def buy(args):
         "shop": shop.name,
         "payment": args["payment"],
     }
+    req = requests.post(
+        f"http://purchase-service:5000/user/{args['user']}/check/buy", json=data
+    )
+    if req.status_code != 200:
+        db.session.rollback()
+        return "Error from CheckService", 400
+    db.session.commit()
     return jsonify(data), 200
