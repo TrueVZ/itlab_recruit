@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "purchases_service"
+version = "0.1.0"
+description = ""
+authors = ["Zaikin Valentin <zaikinvala59@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Flask = "^1.1.2"
+Flask-Migrate = "^2.7.0"
+marshmallow = "^3.10.0"
+psycopg2-binary = "^2.8.6"
+flask-marshmallow = "^0.14.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
