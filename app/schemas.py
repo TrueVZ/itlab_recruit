@@ -24,3 +24,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
 
     checks = ma.Nested(CheckSchema, many=True)
+
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
