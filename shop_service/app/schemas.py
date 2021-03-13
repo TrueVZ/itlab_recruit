@@ -20,3 +20,12 @@ class PurchaseSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Purchase
         load_instance = True
+
+
+purchase_schema = PurchaseSchema()
+purchases_schema = PurchaseSchema(many=True)
+shop_schema = ShopSchema()
+shops_schema = ShopSchema(many=True)
+product_schema = ProductSchema()
+products_schema = ProductSchema(many=True)
+purchase_out_schema = PurchaseSchema(only=("name", "price", "count"))
