@@ -14,3 +14,6 @@ class FactorySchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
 
     products = ma.Nested(ProductSchema, many=True)
+
+
+products_schema = ProductSchema(many=True, only=("name", "count"))
