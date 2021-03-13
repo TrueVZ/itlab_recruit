@@ -1,6 +1,6 @@
 from flask import Flask
 from .config import DevConfig, Test
-from app.extensions import db, migrate
+from app.extensions import db, migrate, ma
 from .models import *
 
 
