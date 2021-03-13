@@ -304,6 +304,24 @@ lint = ["mypy (==0.790)", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre
 tests = ["pytest", "pytz", "simplejson"]
 
 [[package]]
+name = "marshmallow-sqlalchemy"
+version = "0.24.2"
+description = "SQLAlchemy integration with the marshmallow (de)serialization library"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+marshmallow = ">=3.0.0"
+SQLAlchemy = ">=1.2.0"
+
+[package.extras]
+dev = ["pytest", "pytest-lazy-fixture", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.0,<3.0)", "tox"]
+docs = ["sphinx (==3.4.3)", "alabaster (==0.7.12)", "sphinx-issues (==1.2.0)"]
+lint = ["flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.0,<3.0)"]
+tests = ["pytest", "pytest-lazy-fixture"]
+
+[[package]]
 name = "prompt-toolkit"
 version = "3.0.17"
 description = "Library for building powerful interactive command lines in Python"
@@ -457,7 +475,7 @@ watchdog = ["watchdog"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "8d51a293b20d494ba309132d50c0c25b03adcb367950db6865f1d4f1e20e3d32"
+content-hash = "3bff10779d11ba821f3beedcfbcd66bef329f5c40ce3713f9a632dacb356856e"
 
 [metadata.files]
 alembic = [
@@ -591,6 +609,10 @@ markupsafe = [
 marshmallow = [
     {file = "marshmallow-3.10.0-py2.py3-none-any.whl", hash = "sha256:eca81d53aa4aafbc0e20566973d0d2e50ce8bf0ee15165bb799bec0df1e50177"},
     {file = "marshmallow-3.10.0.tar.gz", hash = "sha256:4ab2fdb7f36eb61c3665da67a7ce281c8900db08d72ba6bf0e695828253581f7"},
+]
+marshmallow-sqlalchemy = [
+    {file = "marshmallow-sqlalchemy-0.24.2.tar.gz", hash = "sha256:ee3ead3b83de6608c6850ff60515691b0dc556ca226680f8a82b9f785cdb71b1"},
+    {file = "marshmallow_sqlalchemy-0.24.2-py2.py3-none-any.whl", hash = "sha256:b217c6327bcf291e843dc1c2c20f0915061d4ecc303f0c5be40f23206607f702"},
 ]
 prompt-toolkit = [
     {file = "prompt_toolkit-3.0.17-py3-none-any.whl", hash = "sha256:4cea7d09e46723885cb8bc54678175453e5071e9449821dce6f017b1d1fbfc1a"},

@@ -13,7 +13,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
     DEBUG = True
-    CELERY_BROKER_URL = "amqp://localhost"
+    CELERY_BROKER_URL = "amqp://rabbitmq"
     CELERYBEAT_SCHEDULE = {
         "periodic_task-delivery-product": {
             "task": "task.delivery",

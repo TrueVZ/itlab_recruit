@@ -23,10 +23,15 @@ def delivery():
     shop_ids = Product.query.distinct(Product.shop_id).all()
     for p in shop_ids:
         products = Product.query.filter_by(shop_id=p.shop_id)
-        products_json = products_schema.dump(products)
-        req = requests.put(
-            f"http://shop-service:5001/shop/{p.shop_id}/delivery", json=products_json
-        )
+        products_json = {"products": products_schema.dump(products)}
+        print(products_json)
+        try:
+            req = requests.put(
+                f"http://shop-service:5001/shop/{p.shop_id}/delivery", json=products_json
+            )
+        except requests.ConnectionError:
+            print("Error to connect shop-service")
+
         if req.status_code != 200:
             continue
         for prod in products:

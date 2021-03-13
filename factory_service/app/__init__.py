@@ -1,6 +1,6 @@
 from flask import Flask
 from celery import Celery
-from config import Config
+from app.config import Config
 from app.extensions import db, migrate, ma
 from .models import *
 
