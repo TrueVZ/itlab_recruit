@@ -27,7 +27,8 @@ def delivery():
         print(products_json)
         try:
             req = requests.put(
-                f"http://shop-service:5001/shop/{p.shop_id}/delivery", json=products_json
+                f"http://shop-service:5001/shop/{p.shop_id}/delivery",
+                json=products_json,
             )
         except requests.ConnectionError:
             print("Error to connect shop-service")

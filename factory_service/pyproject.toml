@@ -15,6 +15,7 @@ celery = "^5.0.5"
 psycopg2-binary = "^2.8.6"
 requests = "^2.25.1"
 marshmallow-sqlalchemy = "^0.24.2"
+pika = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 

@@ -14,8 +14,8 @@ import app.routes
 
 spec = APISpec(
     title="PurchasesService API",
-    version='0.0.1',
-    openapi_version='2.0',
+    version="0.0.1",
+    openapi_version="2.0",
     plugins=[
         FlaskPlugin(),
         MarshmallowPlugin(),
@@ -31,10 +31,8 @@ def create_app(testing=False):
     migrate.init_app(app, db)
     ma.init_app(app)
     template = apispec_to_template(
-        app=app,
-        spec=spec,
-        definitions=[CreateCheckSchema, CheckSchema, UserSchema]
+        app=app, spec=spec, definitions=[CreateCheckSchema, CheckSchema, UserSchema]
     )
-    app.config['SWAGGER'] = {'uiversion': 3}
+    app.config["SWAGGER"] = {"uiversion": 3}
     swag = Swagger(app, template=template)
     return app

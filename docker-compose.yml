@@ -46,4 +46,49 @@ services:
       - POSTGRES_DB=app-shop
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=hackme
+
+  factory-service:
+    build: ./factory_service
+    ports:
+      - "5002:5002"
+    depends_on: 
+      - factory-db
+    entrypoint: ./entrypoint.sh
+    environment: 
+      DB_USER: user
+      DB_HOST: factory-db
+      DB_PASS: hackme
+      DB_NAME: app-factory
+  
+  factory-db:
+    restart: always
+    image: postgres
+    ports:
+    - "5434:5432"
+    environment: 
+      - POSTGRES_DB=app-factory
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=hackme
+
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbitmq
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+    restart: on-failure
+    
+  celery:
+    build: ./factory_service
+    command: celery -A app.tasks.celery worker -B 
+    depends_on: 
+    - "rabbitmq"
+    restart: always
+    environment: 
+      DB_USER: user
+      DB_HOST: factory-db
+      DB_PASS: hackme
+      DB_NAME: app-factory
+
+
   

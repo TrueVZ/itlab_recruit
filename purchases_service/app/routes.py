@@ -1,5 +1,11 @@
 from app.models import User, Check, Purchase
-from app.schemas import user_schema, users_schema, purchases_schema, check_schema, checks_schema
+from app.schemas import (
+    user_schema,
+    users_schema,
+    purchase_schema,
+    check_schema,
+    checks_schema,
+)
 from app.validation import CreateCheckSchema
 from app import db
 from flask import Blueprint, jsonify
@@ -119,9 +125,6 @@ def add_check(args, user_id):
         description: User not found
       '5xx':
         description: Unexpected error
-
-
-
     """
     user = User.query.get(user_id)
     if user is None:
@@ -132,6 +135,17 @@ def add_check(args, user_id):
     db.session.add(check)
     db.session.commit()
     return check_schema.dump(check)
+
+
+@bp.route("/user/<int:user_id>/purchases/<int:purchase_id>", methods=["PUT"])
+@use_args({"category": fields.Str(required=True)})
+def change_category(args, user_id, purchase_id):
+    purchase = Purchase.query.get(purchase_id)
+    if purchase is None:
+        return jsonify(message="Purchases not found"), 404
+    purchase.category = args["category"]
+    db.session.commit()
+    return purchase_schema.dump(purchase)
 
 
 # @bp.route("/user/<int:user_id/check/", methods=["GET"])
