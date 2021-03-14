@@ -13,6 +13,20 @@ python-editor = ">=0.3"
 SQLAlchemy = ">=1.3.0"
 
 [[package]]
+name = "amqpstorm"
+version = "2.8.3"
+description = "Thread-safe Python RabbitMQ Client & Management library."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+pamqp = ">=2.0.0,<3.0"
+
+[package.extras]
+management = ["requests"]
+
+[[package]]
 name = "apispec"
 version = "4.3.0"
 description = "A pluggable API specification generator. Currently supports the OpenAPI Specification (f.k.a. the Swagger specification)."
@@ -275,17 +289,15 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "pika"
-version = "1.2.0"
-description = "Pika Python AMQP Client Library"
+name = "pamqp"
+version = "2.3.0"
+description = "RabbitMQ Focused AMQP low-level library"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.extras]
-gevent = ["gevent"]
-tornado = ["tornado"]
-twisted = ["twisted"]
+codegen = ["lxml"]
 
 [[package]]
 name = "psycopg2-binary"
@@ -422,12 +434,16 @@ watchdog = ["watchdog"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "e8c3140aee459cb1f7f93ab118defffe13e4e598a5df72d40437408b1d17688b"
+content-hash = "5544049b76e647e79934fd99b69f5fa088e02dae9a723ac2630da340e7aab833"
 
 [metadata.files]
 alembic = [
     {file = "alembic-1.5.7-py2.py3-none-any.whl", hash = "sha256:f33d561f3ce2ca390f1c87ff3849cd7d97bb93bae9c91357727263498e10028f"},
     {file = "alembic-1.5.7.tar.gz", hash = "sha256:66bbb0e7d6277b007dfe7e27237093c79b76cf4f94e6fbd0f7af6f9409546fe6"},
+]
+amqpstorm = [
+    {file = "AMQPStorm-2.8.3-py2.py3-none-any.whl", hash = "sha256:4422b80f0c63958f815d449f0a312c3be6f1efaef13c4d6e56ee6de704437f21"},
+    {file = "AMQPStorm-2.8.3.tar.gz", hash = "sha256:e2aae36d87136d1ba470a1d2fc8063b41520c8e446589f2eddaf7ebfa4e4f52c"},
 ]
 apispec = [
     {file = "apispec-4.3.0-py2.py3-none-any.whl", hash = "sha256:83e4d30edce987f4791f950c847d2b8cbe91e55af3d1ac7e3a35011a5c6fdbdd"},
@@ -558,9 +574,9 @@ mistune = [
     {file = "mistune-0.8.4-py2.py3-none-any.whl", hash = "sha256:88a1051873018da288eee8538d476dffe1262495144b33ecb586c4ab266bb8d4"},
     {file = "mistune-0.8.4.tar.gz", hash = "sha256:59a3429db53c50b5c6bcc8a07f8848cb00d7dc8bdb431a4ab41920d201d4756e"},
 ]
-pika = [
-    {file = "pika-1.2.0-py2.py3-none-any.whl", hash = "sha256:59da6701da1aeaf7e5e93bb521cc03129867f6e54b7dd352c4b3ecb2bd7ec624"},
-    {file = "pika-1.2.0.tar.gz", hash = "sha256:f023d6ac581086b124190cb3dc81dd581a149d216fa4540ac34f9be1e3970b89"},
+pamqp = [
+    {file = "pamqp-2.3.0-py2.py3-none-any.whl", hash = "sha256:2f81b5c186f668a67f165193925b6bfd83db4363a6222f599517f29ecee60b02"},
+    {file = "pamqp-2.3.0.tar.gz", hash = "sha256:5cd0f5a85e89f20d5f8e19285a1507788031cfca4a9ea6f067e3cf18f5e294e8"},
 ]
 psycopg2-binary = [
     {file = "psycopg2-binary-2.8.6.tar.gz", hash = "sha256:11b9c0ebce097180129e422379b824ae21c8f2a6596b159c7659e2e5a00e1aa0"},
