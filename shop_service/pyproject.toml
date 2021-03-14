@@ -15,6 +15,9 @@ marshmallow-sqlalchemy = "^0.24.2"
 Flask-Migrate = "^2.7.0"
 requests = "^2.25.1"
 psycopg2-binary = "^2.8.6"
+flasgger = "^0.9.5"
+apispec = "^4.3.0"
+apispec-webframeworks = "^0.5.2"
 
 [tool.poetry.dev-dependencies]
 
