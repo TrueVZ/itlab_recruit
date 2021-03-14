@@ -82,7 +82,7 @@ def get_user_by_id(user_id):
         return jsonify({"message": "User not found"}), 404
 
 
-@bp.route("/user/", methods=["GET"])
+@bp.route("/user", methods=["GET"])
 def get_all_user():
     """
     Get all users
@@ -99,7 +99,7 @@ def get_all_user():
     return jsonify(users=users_schema.dump(users)), 200
 
 
-@bp.route("/user/<int:user_id>/check/buy/", methods=["POST"])
+@bp.route("/user/<int:user_id>/check/buy", methods=["POST"])
 @use_args(CreateCheckSchema)
 def add_check(args, user_id):
     """

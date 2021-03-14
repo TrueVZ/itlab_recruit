@@ -23,7 +23,7 @@ import requests
 bp = Blueprint("shop", __name__)
 
 
-@bp.route("/shop/create/", methods=["POST"])
+@bp.route("/shop/create", methods=["POST"])
 @use_args(CreateShopSchema, location="json")
 def add_shop(args):
     try:
@@ -36,7 +36,7 @@ def add_shop(args):
         return jsonify(message="Shop already create"), 404
 
 
-@bp.route("/shop/<int:shop_id>/", methods=["GET"])
+@bp.route("/shop/<int:shop_id>", methods=["GET"])
 def get_shop(shop_id):
     """
     Get shop by id
@@ -65,7 +65,7 @@ def get_shop(shop_id):
     return jsonify(message="Shop not found"), 404
 
 
-@bp.route("/shop/<int:shop_id>/product/", methods=["POST"])
+@bp.route("/shop/<int:shop_id>/product", methods=["POST"])
 @use_args({"products": fields.Nested(CreateProductSchema, many=True)}, location="json")
 def add_product(args, shop_id):
     shop = Shop.query.get(shop_id)
@@ -81,7 +81,7 @@ def add_product(args, shop_id):
     return shop_schema.dump(shop)
 
 
-@bp.route("/shop/<int:shop_id>/history/", methods=["GET"])
+@bp.route("/shop/<int:shop_id>/history", methods=["GET"])
 def get_history(shop_id):
     """
     History of purchases
@@ -110,7 +110,7 @@ def get_history(shop_id):
     return jsonify(purchases=purchases_schema.dump(purchases))
 
 
-@bp.route("/shop/<int:shop_id>/product/", methods=["GET"])
+@bp.route("/shop/<int:shop_id>/product", methods=["GET"])
 @use_kwargs({"category": fields.Str(required=False)}, location="query")
 def get_product_category(shop_id, category=None):
     """
@@ -151,7 +151,7 @@ def get_product_category(shop_id, category=None):
     return jsonify(products=products_schema.dump(products))
 
 
-@bp.route("/shop/<int:shop_id>/delivery/", methods=["PUT"])
+@bp.route("/shop/<int:shop_id>/delivery", methods=["PUT"])
 @use_args({"products": fields.Nested(DeliveryProductSchema(many=True))})
 def delivery(args, shop_id):
     for p in args["products"]:
@@ -164,7 +164,7 @@ def delivery(args, shop_id):
     return "Ok", 200
 
 
-@bp.route("/buy/", methods=["PUT"])
+@bp.route("/shop/buy", methods=["PUT"])
 @use_args(BuyInputSchema, location="json")
 def buy(args):
     shop = Shop.query.filter_by(name=args["shop"]).first()

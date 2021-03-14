@@ -89,6 +89,15 @@ services:
       DB_HOST: factory-db
       DB_PASS: hackme
       DB_NAME: app-factory
-
-
+    
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:8080"
+    volumes: 
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on: 
+      - purchase-service
+      - shop-service
+      - factory-service
   

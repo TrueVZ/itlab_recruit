@@ -28,7 +28,7 @@ spec = APISpec(
 def create_app(testing=False):
     app = Flask(__name__)
     app.config.from_object(DevConfig)
-    app.register_blueprint(routes.bp)
+    app.register_blueprint(routes.bp, url_prefix='/api')
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)
