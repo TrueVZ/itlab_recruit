@@ -2,8 +2,9 @@ from flask import Flask
 from celery import Celery
 from app.config import Config
 from app.extensions import db, migrate, ma
-from .models import *
 
+from .models import *
+import app.routes
 
 def create_app(testing=False):
     app = Flask(__name__)
@@ -11,6 +12,7 @@ def create_app(testing=False):
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)
+    app.register_blueprint(routes.bp, url_prefix='/api')
     return app
 
 

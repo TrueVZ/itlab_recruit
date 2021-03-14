@@ -1,6 +1,6 @@
 from app import make_celery, db
 from app.models import Factory, Product
-from app.schemas import products_schema
+from app.schemas import products_task_schema
 import requests
 
 celery = make_celery()
@@ -23,7 +23,7 @@ def delivery():
     shop_ids = Product.query.distinct(Product.shop_id).all()
     for p in shop_ids:
         products = Product.query.filter_by(shop_id=p.shop_id)
-        products_json = {"products": products_schema.dump(products)}
+        products_json = {"products": products_task_schema.dump(products)}
         print(products_json)
         try:
             req = requests.put(
