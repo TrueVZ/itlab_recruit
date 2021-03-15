@@ -1,5 +1,5 @@
-from flask import Flask
-from flasgger import Swagger
+from flask import Flask, request
+from flasgger import Swagger, LazyString, LazyJSONEncoder
 from flasgger.utils import apispec_to_template
 from apispec import APISpec
 from apispec_webframeworks.flask import FlaskPlugin
@@ -15,12 +15,28 @@ import app.routes
 spec = APISpec(
     title="PurchasesService API",
     version="0.0.1",
-    openapi_version="2.0",
+    openapi_version="3.0.0",
     plugins=[
         FlaskPlugin(),
         MarshmallowPlugin(),
     ],
 )
+
+
+def load_docstrings(spec, app):
+    with app.test_request_context():
+        for fn_name in app.view_functions:
+            if fn_name == 'static':
+                continue
+            view_fn = app.view_functions[fn_name]
+            spec.path(view=view_fn)
+
+    write_yaml_file(spec)
+
+
+def write_yaml_file(spec: APISpec):
+   with open('docs.yaml', 'w') as file:
+       file.write(spec.to_yaml())
 
 
 def create_app(testing=False):
@@ -30,9 +46,5 @@ def create_app(testing=False):
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)
-    template = apispec_to_template(
-        app=app, spec=spec, definitions=[CreateCheckSchema, CheckSchema, UserSchema]
-    )
-    app.config["SWAGGER"] = {"uiversion": 3}
-    swag = Swagger(app, template=template)
+    load_docstrings(spec, app)
     return app

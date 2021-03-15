@@ -26,6 +26,29 @@ bp = Blueprint("shop", __name__)
 @bp.route("/shop/create", methods=["POST"])
 @use_args(CreateShopSchema, location="json")
 def add_shop(args):
+    """
+    Create shop
+    ---
+    post:
+      description: Create shop
+      parameters:
+      - name: shopData
+        in: body
+        required: true
+        schema: CreateShopSchema
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: ShopSchema
+        '400':
+          description: Bad request
+        '404':
+          description: Shop already exist
+        '5xx':
+          description: Unexpected error
+    """
     try:
         shop = shop_schema.load(args)
         db.session.add(shop)
@@ -39,25 +62,28 @@ def add_shop(args):
 @bp.route("/shop/<int:shop_id>", methods=["GET"])
 def get_shop(shop_id):
     """
-    Get shop by id
+    Get shop by ID
     ---
+    get:
+      description: Get shop by ID
       parameters:
-        - name: shopID
-          in: path
+      - name: shopID
+        in: path
+        required: true
+        schema:
           type: integer
-          required: true
       responses:
         '200':
           description: OK
-          schema:
-            $ref: '#/definitions/Shop'
+          content:
+            application/json:
+              schema: ShopSchema
         '400':
           description: Bad request
         '404':
           description: Shop not found
         '5xx':
           description: Unexpected error
-
     """
     shop = Shop.query.get(shop_id)
     if shop is not None:
@@ -68,6 +94,30 @@ def get_shop(shop_id):
 @bp.route("/shop/<int:shop_id>/product", methods=["POST"])
 @use_args({"products": fields.Nested(CreateProductSchema, many=True)}, location="json")
 def add_product(args, shop_id):
+    """
+    Add product to shop
+    ---
+    post:
+      description: Add product to shop
+      parameters:
+      - name: products
+        in: body
+        required: true
+        schema:
+          CreateProductSchema
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: ShopSchema
+        '400':
+          description: Bad request
+        '404':
+          description: Shop not found
+        '5xx':
+          description: Unexpected error
+    """
     shop = Shop.query.get(shop_id)
     try:
         for p in args["products"]:
@@ -84,27 +134,31 @@ def add_product(args, shop_id):
 @bp.route("/shop/<int:shop_id>/history", methods=["GET"])
 def get_history(shop_id):
     """
-    History of purchases
+    History of purchases in shop
     ---
+    get:
+      description: History of purchases in shop
       parameters:
-        - name: shopID
-          in: path
+      - name: shopID
+        in: path
+        required: true
+        schema:
           type: integer
-          required: true
       responses:
         '200':
           description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Purchase'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Purchase'
         '400':
           description: Bad request
         '404':
           description: Shop not found
         '5xx':
           description: Unexpected error
-
     """
     purchases = Purchase.query.filter_by(shop_id=shop_id).all()
     return jsonify(purchases=purchases_schema.dump(purchases))
@@ -116,32 +170,34 @@ def get_product_category(shop_id, category=None):
     """
     Get products from shop
     ---
+    get:
+      description: Get products from shop
       parameters:
-        - name: shopID
-          in: path
+      - name: shopID
+        in: path
+        required: true
+        schema:
           type: integer
-          required: true
-        - name: category
-          in: body
-          type: object
-          properties:
-            categoryName:
-              type: string
-          required: true
+      - name: categoryName
+        in: query
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Product'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
         '400':
           description: Bad request
         '404':
           description: Shop not found
         '5xx':
           description: Unexpected error
-
     """
     if category is not None:
         products = Product.query.filter_by(shop_id=shop_id, category=category).all()
@@ -167,6 +223,29 @@ def delivery(args, shop_id):
 @bp.route("/shop/buy", methods=["PUT"])
 @use_args(BuyInputSchema, location="json")
 def buy(args):
+    """
+    Buy products from shop
+    ---
+    get:
+      description: Buy products from shop
+      parameters:
+      - name: buy
+        in: body
+        required: true
+        schema: BuyInputSchema
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: BuyOutputSchema
+        '400':
+          description: Bad request
+        '404':
+          description: Shop not found
+        '5xx':
+          description: Unexpected error
+    """
     shop = Shop.query.filter_by(name=args["shop"]).first()
     if shop is None:
         return jsonify(message="Shop not found"), 404
