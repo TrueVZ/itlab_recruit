@@ -27,32 +27,13 @@ components:
           maxLength: 100
           nullable: true
           type: string
-        products:
-          items:
-            $ref: '#/components/schemas/Product'
-          type: array
-      type: object
-    Product:
-      properties:
-        count:
-          nullable: true
-          type: integer
-        id:
-          type: integer
-        name:
-          maxLength: 50
-          nullable: true
-          type: string
-        shop_id:
-          nullable: true
-          type: integer
       type: object
 info:
   title: FactoryService API
   version: 0.0.1
 openapi: 3.0.0
 paths:
-  /api/factory/create/:
+  /api/factory/create:
     post:
       description: Create factory
       requestBody:
@@ -87,7 +68,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Factory'
+                items:
+                  $ref: '#/components/schemas/Product'
+                type: array
           description: OK
         '400':
           description: Bad request

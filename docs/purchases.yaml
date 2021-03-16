@@ -34,8 +34,6 @@ components:
           type: array
         shop:
           type: string
-        total:
-          type: integer
       type: object
     CreatePurchase:
       properties:
