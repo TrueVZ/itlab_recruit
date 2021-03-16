@@ -39,14 +39,10 @@ components:
       type: object
     CreatePurchase:
       properties:
-        category:
-          type: string
         count:
           type: integer
         name:
           type: string
-        price:
-          type: integer
       type: object
     Purchase:
       properties:
@@ -105,7 +101,7 @@ paths:
           description: Bad request
         '404':
           description: User not found
-        5xx:
+        default:
           description: Unexpected error
   /api/user/{user_id}:
     get:
@@ -127,9 +123,9 @@ paths:
           description: Bad request
         '404':
           description: User not found
-        5xx:
+        default:
           description: Unexpected error
-  /api/user:
+  /api/user/all:
     get:
       responses:
         '200':
@@ -149,11 +145,11 @@ paths:
         required: true
         schema:
           type: integer
-      - in: body
-        name: check
-        required: true
-        schema:
-          $ref: '#/components/schemas/CreateCheck'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCheck'
       responses:
         '200':
           content:
@@ -165,7 +161,7 @@ paths:
           description: Bad request
         '404':
           description: User not found
-        5xx:
+        default:
           description: Unexpected error
   /api/user/{user_id}/purchases/{purchase_id}:
     put:
@@ -192,5 +188,5 @@ paths:
           description: Bad request
         '404':
           description: User or Purchase not found
-        5xx:
+        default:
           description: Unexpected error

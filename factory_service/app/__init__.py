@@ -42,7 +42,10 @@ def write_yaml_file(spec: APISpec):
 
 def create_app(testing=False):
     app = Flask(__name__)
-    app.config.from_object(DevConfig)
+    if testing:
+        app.config.from_object(Test)
+    else:
+        app.config.from_object(DevConfig)
     app.register_blueprint(routes.bp, url_prefix='/api')
     db.init_app(app)
     migrate.init_app(app, db)

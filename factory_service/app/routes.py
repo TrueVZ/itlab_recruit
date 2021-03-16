@@ -19,11 +19,10 @@ def add_factory(args):
     ---
     post:
       description: Create factory
-      parameters:
-      - name: factory
-        in: body
-        required: true
-        schema: CreateFactorySchema
+      requestBody:
+        content:
+          application/json:
+            schema: CreateFactorySchema
       responses:
         '200':
           description: OK
@@ -34,7 +33,7 @@ def add_factory(args):
           description: Bad request
         '404':
           description: Factory already exist
-        '5xx':
+        default:
           description: Unexpected error
     """
     try:
@@ -55,11 +54,11 @@ def add_product(args, factory_id):
     ---
     post:
       description: Add products to factory
-      parameters:
-      - name: order
-        in: body
+      requestBody:
         required: true
-        schema: CreateProductsSchema
+        content:
+          application/json:
+            schema: CreateProductsSchema
       responses:
         '200':
           description: OK
@@ -70,7 +69,7 @@ def add_product(args, factory_id):
           description: Bad request
         '404':
           description: Factory not found
-        '5xx':
+        default:
           description: Unexpected error
     """
     factory = Factory.query.get(factory_id)
@@ -88,7 +87,13 @@ def get_product(factory_id):
     """
     Get products list
     ---
-    post:
+    get:
+      parameters:
+      - in: path
+        name: factoryID
+        required: true
+        schema:
+          type: integer
       responses:
         '200':
           description: OK
@@ -102,7 +107,7 @@ def get_product(factory_id):
           description: Bad request
         '404':
           description: Factory not found
-        '5xx':
+        default:
           description: Unexpected error
     """
     factory = Factory.query.get(factory_id)
@@ -117,7 +122,7 @@ def get_factory(factory_id):
     """
     Get foctory by id
     ---
-    post:
+    get:
       description: Get factory by id
       parameters:
       - name: factoryID
@@ -135,7 +140,7 @@ def get_factory(factory_id):
           description: Bad request
         '404':
           description: Factory already exist
-        '5xx':
+        default:
           description: Unexpected error
     """
     factory = Factory.query.get(factory_id)

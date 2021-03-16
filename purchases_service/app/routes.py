@@ -12,6 +12,7 @@ from flask import Blueprint, jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 from sqlalchemy.exc import IntegrityError
+import requests
 
 bp = Blueprint("purchases", __name__)
 
@@ -40,7 +41,7 @@ def add_user(args):
           description: Bad request
         '404':
           description: User not found
-        '5xx':
+        default:
           description: Unexpected error
     """
     try:
@@ -76,7 +77,7 @@ def get_user_by_id(user_id):
           description: Bad request
         '404':
           description: User not found
-        '5xx':
+        default:
           description: Unexpected error
 
     """
@@ -87,7 +88,7 @@ def get_user_by_id(user_id):
         return jsonify({"message": "User not found"}), 404
 
 
-@bp.route("/user", methods=["GET"])
+@bp.route("/user/all", methods=["GET"])
 def get_all_user():
     """
     Get all users
@@ -112,7 +113,7 @@ def get_all_user():
 @use_args(CreateCheckSchema)
 def add_check(args, user_id):
     """
-    Create check
+    Buy product from shop and create check
     ---
     post:
       description: Create check
@@ -122,10 +123,10 @@ def add_check(args, user_id):
         in: path
         schema:
           type: integer
-      - name: check
-        in: body
-        required: true
-        schema: CreateCheckSchema
+      requestBody:
+          content:
+              application/json:
+                  schema: CreateCheckSchema
       responses:
         '200':
           description: OK
@@ -136,7 +137,7 @@ def add_check(args, user_id):
           description: Bad request
         '404':
           description: User not found
-        '5xx':
+        default:
           description: Unexpected error
 
     """
@@ -144,7 +145,12 @@ def add_check(args, user_id):
     if user is None:
         db.session.rollback()
         return jsonify(message="User not found"), 404
-    check = check_schema.load(args)
+    args['user'] = user_id
+    req = requests.put(f"http://shop-service:5001/api/shop/buy", json=args)
+    if req.status_code != 200:
+        return jsonify(message="Error from ShopService"), 400
+    req_data = req.json()
+    check = check_schema.load(req_data)
     check.customer = user
     db.session.add(check)
     db.session.commit()
@@ -180,9 +186,8 @@ def change_category(args, user_id, purchase_id):
           description: Bad request
         '404':
           description: User or Purchase not found
-        '5xx':
+        default:
           description: Unexpected error
-
     """
     purchase = Purchase.query.get(purchase_id)
     if purchase is None:

@@ -27,7 +27,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 
 
 user_schema = UserSchema()
-users_schema = UserSchema(many=True)
+users_schema = UserSchema(many=True, only=('id', 'username'))
 check_schema = CheckSchema()
 checks_schema = CheckSchema(many=True)
 purchase_schema = PurchaseSchema()

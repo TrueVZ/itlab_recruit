@@ -13,7 +13,7 @@ import app.routes
 
 
 spec = APISpec(
-    title="PurchasesService API",
+    title="ShopService API",
     version="0.0.1",
     openapi_version="3.0.0",
     plugins=[
@@ -41,7 +41,10 @@ def write_yaml_file(spec: APISpec):
 
 def create_app(testing=False):
     app = Flask(__name__)
-    app.config.from_object(DevConfig)
+    if testing:
+        app.config.from_object(Test)
+    else:
+        app.config.from_object(DevConfig)
     app.register_blueprint(routes.bp, url_prefix='/api')
     db.init_app(app)
     migrate.init_app(app, db)

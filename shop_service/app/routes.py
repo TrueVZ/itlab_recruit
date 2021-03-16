@@ -31,11 +31,10 @@ def add_shop(args):
     ---
     post:
       description: Create shop
-      parameters:
-      - name: shopData
-        in: body
-        required: true
-        schema: CreateShopSchema
+      requestBody:
+        content:
+          application/json:
+            schema: CreateShopSchema
       responses:
         '200':
           description: OK
@@ -46,7 +45,7 @@ def add_shop(args):
           description: Bad request
         '404':
           description: Shop already exist
-        '5xx':
+        default:
           description: Unexpected error
     """
     try:
@@ -82,7 +81,7 @@ def get_shop(shop_id):
           description: Bad request
         '404':
           description: Shop not found
-        '5xx':
+        default:
           description: Unexpected error
     """
     shop = Shop.query.get(shop_id)
@@ -99,12 +98,10 @@ def add_product(args, shop_id):
     ---
     post:
       description: Add product to shop
-      parameters:
-      - name: products
-        in: body
-        required: true
-        schema:
-          CreateProductSchema
+      requestBody:
+        content:
+          application/json:
+            schema: CreateProductSchema
       responses:
         '200':
           description: OK
@@ -115,7 +112,7 @@ def add_product(args, shop_id):
           description: Bad request
         '404':
           description: Shop not found
-        '5xx':
+        default:
           description: Unexpected error
     """
     shop = Shop.query.get(shop_id)
@@ -151,13 +148,12 @@ def get_history(shop_id):
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: '#/components/schemas/Purchase'
+                items: PurchaseSchema
         '400':
           description: Bad request
         '404':
           description: Shop not found
-        '5xx':
+        default:
           description: Unexpected error
     """
     purchases = Purchase.query.filter_by(shop_id=shop_id).all()
@@ -196,7 +192,7 @@ def get_product_category(shop_id, category=None):
           description: Bad request
         '404':
           description: Shop not found
-        '5xx':
+        default:
           description: Unexpected error
     """
     if category is not None:
@@ -228,11 +224,10 @@ def buy(args):
     ---
     get:
       description: Buy products from shop
-      parameters:
-      - name: buy
-        in: body
-        required: true
-        schema: BuyInputSchema
+      requestBody:
+        content:
+          application/json:
+            schema: BuyInputSchema
       responses:
         '200':
           description: OK
@@ -243,15 +238,22 @@ def buy(args):
           description: Bad request
         '404':
           description: Shop not found
-        '5xx':
+        default:
           description: Unexpected error
     """
+
     shop = Shop.query.filter_by(name=args["shop"]).first()
     if shop is None:
         return jsonify(message="Shop not found"), 404
     purchases = []
+    print(args)
+    print(args['purchases'])
     for p in args["purchases"]:
+        print(p)
         product = Product.query.filter_by(name=p["name"], shop=shop).first()
+        if product is None:
+            db.session.rollback()
+            return jsonify(message=f"Product not found {p['name']}"), 404
         if product.count < p["count"]:
             db.session.rollback()
             return jsonify(message=f"Not enough product {product.name}"), 404
@@ -275,11 +277,5 @@ def buy(args):
         "shop": shop.name,
         "payment": args["payment"],
     }
-    req = requests.post(
-        f"http://purchase-service:5000/user/{args['user']}/check/buy", json=data
-    )
-    if req.status_code != 200:
-        db.session.rollback()
-        return "Error from CheckService", 400
     db.session.commit()
     return jsonify(data), 200

@@ -55,12 +55,11 @@ paths:
   /api/factory/create/:
     post:
       description: Create factory
-      parameters:
-      - in: body
-        name: factory
-        required: true
-        schema:
-          $ref: '#/components/schemas/CreateFactory'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFactory'
       responses:
         '200':
           content:
@@ -72,22 +71,17 @@ paths:
           description: Bad request
         '404':
           description: Factory already exist
-        5xx:
+        default:
           description: Unexpected error
   /api/factory/{factory_id}/order:
     post:
       description: Add products to factory
-      parameters:
-      - in: path
-        name: factoryID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProducts'
         required: true
-        schema:
-          type: integer
-      - in: body
-        name: order
-        required: true
-        schema:
-          $ref: '#/components/schemas/CreateProducts'
       responses:
         '200':
           content:
@@ -99,11 +93,10 @@ paths:
           description: Bad request
         '404':
           description: Factory not found
-        5xx:
+        default:
           description: Unexpected error
   /api/factory/{factory_id}/product:
     get:
-      description: List products
       parameters:
       - in: path
         name: factoryID
@@ -123,7 +116,7 @@ paths:
           description: Bad request
         '404':
           description: Factory not found
-        5xx:
+        default:
           description: Unexpected error
   /api/factory/{factory_id}:
     get:
@@ -145,5 +138,5 @@ paths:
           description: Bad request
         '404':
           description: Factory already exist
-        5xx:
+        default:
           description: Unexpected error

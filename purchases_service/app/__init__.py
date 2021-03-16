@@ -1,10 +1,8 @@
-from flask import Flask, request
-from flasgger import Swagger, LazyString, LazyJSONEncoder
-from flasgger.utils import apispec_to_template
+from flask import Flask
 from apispec import APISpec
 from apispec_webframeworks.flask import FlaskPlugin
 from apispec.ext.marshmallow import MarshmallowPlugin
-from .config import DevConfig, Test
+from config import DevConfig, Test
 from app.extensions import db, migrate, ma
 from .models import *
 from .schemas import *
@@ -41,7 +39,10 @@ def write_yaml_file(spec: APISpec):
 
 def create_app(testing=False):
     app = Flask(__name__)
-    app.config.from_object(DevConfig)
+    if testing:
+        app.config.from_object(Test)
+    else:
+        app.config.from_object(DevConfig)
     app.register_blueprint(routes.bp, url_prefix='/api')
     db.init_app(app)
     migrate.init_app(app, db)
