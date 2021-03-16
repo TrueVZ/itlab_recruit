@@ -12,10 +12,11 @@ class FactorySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Factory
         load_instance = True
+        exclude = ("products",)
 
     products = ma.Nested(ProductSchema, many=True)
 
 
 products_schema = ProductSchema(many=True, only=("name", "count", "shop_id"))
 products_task_schema = ProductSchema(many=True, only=("name", "count"))
-factory_schema = FactorySchema(only=("name", "products"))
+factory_schema = FactorySchema(only=("name", "kpd"))

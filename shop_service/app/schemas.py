@@ -12,6 +12,7 @@ class ShopSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Shop
         load_instance = True
+        exclude = ("products", )
 
     products = ma.Nested(ProductSchema, many=True)
 
@@ -24,8 +25,8 @@ class PurchaseSchema(ma.SQLAlchemyAutoSchema):
 
 purchase_schema = PurchaseSchema()
 purchases_schema = PurchaseSchema(many=True)
-shop_schema = ShopSchema()
-shops_schema = ShopSchema(many=True)
+shop_schema = ShopSchema(only=("name", "id", "address", "phone"))
+shops_schema = ShopSchema(only=("name", "id"), many=True)
 product_schema = ProductSchema()
 products_schema = ProductSchema(many=True)
 purchase_out_schema = PurchaseSchema(only=("name", "price", "count"))

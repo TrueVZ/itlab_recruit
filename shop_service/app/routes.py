@@ -18,7 +18,6 @@ from flask import Blueprint, jsonify
 from webargs import fields
 from webargs.flaskparser import use_args, use_kwargs
 from sqlalchemy.exc import IntegrityError
-import requests
 
 bp = Blueprint("shop", __name__)
 
@@ -43,8 +42,8 @@ def add_shop(args):
               schema: ShopSchema
         '400':
           description: Bad request
-        '404':
-          description: Shop already exist
+        '409':
+          description: Shop with this name already exist
         default:
           description: Unexpected error
     """
@@ -55,7 +54,7 @@ def add_shop(args):
         return shop_schema.dump(shop), 200
     except IntegrityError:
         db.session.rollback()
-        return jsonify(message="Shop already create"), 404
+        return jsonify(message="Shop with this name already exist"), 409
 
 
 @bp.route("/shop/<int:shop_id>", methods=["GET"])
@@ -104,18 +103,23 @@ def add_product(args, shop_id):
             schema: CreateProductSchema
       responses:
         '200':
-          description: OK
           content:
             application/json:
-              schema: ShopSchema
+              schema:
+                type: array
+                items: PurchaseSchema
         '400':
           description: Bad request
         '404':
           description: Shop not found
+        '409':
+          description: Product already exists
         default:
           description: Unexpected error
     """
     shop = Shop.query.get(shop_id)
+    if shop is None:
+        return jsonify(message="Shop not found"), 404
     try:
         for p in args["products"]:
             product = product_schema.load(p)
@@ -123,9 +127,9 @@ def add_product(args, shop_id):
             db.session.add(product)
     except IntegrityError:
         db.session.rollback()
-        return jsonify(message="Name product already exists")
+        return jsonify(message="Product already exists"), 409
     db.session.commit()
-    return shop_schema.dump(shop)
+    return products_schema.dump(shop.products)
 
 
 @bp.route("/shop/<int:shop_id>/history", methods=["GET"])
@@ -156,7 +160,10 @@ def get_history(shop_id):
         default:
           description: Unexpected error
     """
-    purchases = Purchase.query.filter_by(shop_id=shop_id).all()
+    shop = Shop.query.get(shop_id)
+    if shop is None:
+        return jsonify(message="Shop not found"), 404
+    purchases = Purchase.query.filter_by(shop=shop).all()
     return jsonify(purchases=purchases_schema.dump(purchases))
 
 
@@ -187,7 +194,7 @@ def get_product_category(shop_id, category=None):
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Product'
+                  ProductSchema
         '400':
           description: Bad request
         '404':
@@ -247,9 +254,7 @@ def buy(args):
         return jsonify(message="Shop not found"), 404
     purchases = []
     print(args)
-    print(args['purchases'])
     for p in args["purchases"]:
-        print(p)
         product = Product.query.filter_by(name=p["name"], shop=shop).first()
         if product is None:
             db.session.rollback()

@@ -7,7 +7,6 @@ class CreatePurchaseSchema(Schema):
 
 
 class CreateCheckSchema(Schema):
-    total = fields.Integer()
     shop = fields.String()
     payment = fields.String()
     purchases = fields.Nested(CreatePurchaseSchema(many=True))

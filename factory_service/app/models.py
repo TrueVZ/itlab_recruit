@@ -15,4 +15,4 @@ class Product(db.Model):
     name = db.Column(db.String(50))
     count = db.Column(db.Integer, default=0)
     shop_id = db.Column(db.Integer)
-
+    db.UniqueConstraint('factory_id', 'name', name='unique_product')

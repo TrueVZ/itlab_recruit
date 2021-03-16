@@ -145,10 +145,11 @@ def add_check(args, user_id):
     if user is None:
         db.session.rollback()
         return jsonify(message="User not found"), 404
-    args['user'] = user_id
+    args["user"] = user_id
+    print(args)
     req = requests.put(f"http://shop-service:5001/api/shop/buy", json=args)
     if req.status_code != 200:
-        return jsonify(message="Error from ShopService"), 400
+        return jsonify(message=req.json()), req.status_code
     req_data = req.json()
     check = check_schema.load(req_data)
     check.customer = user
@@ -195,9 +196,3 @@ def change_category(args, user_id, purchase_id):
     purchase.category = args["category"]
     db.session.commit()
     return purchase_schema.dump(purchase)
-
-
-# @bp.route("/user/<int:user_id/check/", methods=["GET"])
-# def get_user_checks(user_id):
-#     checks = Check.query.filter_by(user_id=user_id).all()
-#     return jsonify(checks=checks_schema.dump(checks))

@@ -22,17 +22,14 @@ def create_products():
 def delivery():
     shop_ids = Product.query.distinct(Product.shop_id).all()
     for p in shop_ids:
+        print(p)
         products = Product.query.filter_by(shop_id=p.shop_id)
         products_json = {"products": products_task_schema.dump(products)}
         print(products_json)
-        try:
-            req = requests.put(
-                f"http://shop-service:5001/shop/{p.shop_id}/delivery",
-                json=products_json,
-            )
-        except requests.ConnectionError:
-            print("Error to connect shop-service")
-
+        req = requests.put(
+            f"http://shop-service:5001/api/shop/{p.shop_id}/delivery",
+            json=products_json,
+        )
         if req.status_code != 200:
             continue
         for prod in products:

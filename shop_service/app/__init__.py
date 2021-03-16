@@ -26,7 +26,7 @@ spec = APISpec(
 def load_docstrings(spec, app):
     with app.test_request_context():
         for fn_name in app.view_functions:
-            if fn_name == 'static':
+            if fn_name == "static":
                 continue
             view_fn = app.view_functions[fn_name]
             spec.path(view=view_fn)
@@ -35,8 +35,8 @@ def load_docstrings(spec, app):
 
 
 def write_yaml_file(spec: APISpec):
-   with open('docs.yaml', 'w') as file:
-       file.write(spec.to_yaml())
+    with open("docs.yaml", "w") as file:
+        file.write(spec.to_yaml())
 
 
 def create_app(testing=False):
@@ -45,7 +45,7 @@ def create_app(testing=False):
         app.config.from_object(Test)
     else:
         app.config.from_object(DevConfig)
-    app.register_blueprint(routes.bp, url_prefix='/api')
+    app.register_blueprint(routes.bp, url_prefix="/api")
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)

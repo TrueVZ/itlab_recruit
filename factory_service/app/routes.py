@@ -11,7 +11,7 @@ import requests
 bp = Blueprint("shop", __name__)
 
 
-@bp.route("/factory/create/", methods=["POST"])
+@bp.route("/factory/create", methods=["POST"])
 @use_args(CreateFactorySchema)
 def add_factory(args):
     """
@@ -37,7 +37,7 @@ def add_factory(args):
           description: Unexpected error
     """
     try:
-        factory = Factory(name=args['name'], kpd=args['kpd'])
+        factory = Factory(name=args["name"], kpd=args["kpd"])
         db.session.add(factory)
         db.session.commit()
         return factory_schema.dump(factory)
@@ -64,7 +64,10 @@ def add_product(args, factory_id):
           description: OK
           content:
             application/json:
-              schema: FactorySchema
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
         '400':
           description: Bad request
         '404':
@@ -75,14 +78,15 @@ def add_product(args, factory_id):
     factory = Factory.query.get(factory_id)
     if factory is None:
         return jsonify(message="Factory not found")
-    for p in args['products']:
-        product = Product(name=p, factory_id=factory_id, shop_id=args['shop_id'])
+    for p in args["products"]:
+        product = Product(name=p, factory_id=factory_id, shop_id=args["shop_id"])
         db.session.add(product)
         db.session.commit()
-    return factory_schema.dump(factory)
+    products = Product.query.filter_by(factory_id=factory_id).all
+    return jsonify(products=products_schema.dump(factory.products))
 
 
-@bp.route("/factory/<int:factory_id>/product", methods=['GET'])
+@bp.route("/factory/<int:factory_id>/product", methods=["GET"])
 def get_product(factory_id):
     """
     Get products list
@@ -117,7 +121,7 @@ def get_product(factory_id):
     return jsonify(products=products_schema.dump(products))
 
 
-@bp.route("/factory/<int:factory_id>", methods=['GET'])
+@bp.route("/factory/<int:factory_id>", methods=["GET"])
 def get_factory(factory_id):
     """
     Get foctory by id
