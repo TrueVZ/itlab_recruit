@@ -47,11 +47,11 @@ def add_user(args):
     try:
         user = User(username=args["username"])
         db.session.add(user)
-        db.session.commit()
-        return user_schema.dump(user)
     except IntegrityError:
         db.session.rollback()
         return jsonify({"message": "User already exist"}), 400
+    db.session.commit()
+    return user_schema.dump(user)
 
 
 @bp.route("/user/<int:user_id>", methods=["GET"])
