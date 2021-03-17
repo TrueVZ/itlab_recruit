@@ -228,9 +228,8 @@ def change_category(args, user_id, purchase_id):
           description: Unexpected error
     """
     purchase = Purchase.query.get(purchase_id)
-    user = User.query.get(user_id)
-    if purchase is None or User is not None:
-        return jsonify(message="Purchase or User not found"), 404
+    if purchase is None:
+        return jsonify(message="Purchase not found"), 404
     purchase.category = args["category"]
     db.session.commit()
     return purchase_schema.dump(purchase)
