@@ -16,7 +16,7 @@ class TestUser:
     def test_all_users(self, app, session):
         app.post("/api/user/create", json=dict(username="test1"))
         app.post("/api/user/create", json=dict(username="test2"))
-        res = app.get("/api/user")
+        res = app.get("/api/user/all")
         assert res.status_code == 200
         assert res.json["users"][0]["id"] == 1
         assert res.json["users"][1]["id"] == 2
