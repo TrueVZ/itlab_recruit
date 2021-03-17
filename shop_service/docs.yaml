@@ -1,0 +1,277 @@
+components:
+  schemas:
+    BuyInput:
+      properties:
+        payment:
+          type: string
+        purchases:
+          items:
+            $ref: '#/components/schemas/CreatePurchase'
+          type: array
+        shop:
+          type: string
+        user:
+          type: integer
+      type: object
+    BuyOutput:
+      properties:
+        payment:
+          type: string
+        purchases:
+          items:
+            $ref: '#/components/schemas/OutputPurchase'
+          type: array
+        shop:
+          type: string
+        total:
+          type: integer
+      type: object
+    CreateProduct:
+      properties:
+        category:
+          type: string
+        count:
+          minimum: 0
+          type: integer
+        description:
+          type: string
+        name:
+          type: string
+        price:
+          minimum: 1
+          type: integer
+      type: object
+    CreatePurchase:
+      properties:
+        count:
+          minimum: 1
+          type: integer
+        name:
+          type: string
+      type: object
+    CreateShop:
+      properties:
+        address:
+          type: string
+        name:
+          type: string
+        phone:
+          type: string
+      type: object
+    OutputPurchase:
+      properties:
+        count:
+          type: integer
+        name:
+          type: string
+        price:
+          type: integer
+      type: object
+    Product:
+      properties:
+        category:
+          maxLength: 200
+          nullable: true
+          type: string
+        count:
+          nullable: true
+          type: integer
+        description:
+          maxLength: 200
+          nullable: true
+          type: string
+        id:
+          type: integer
+        name:
+          maxLength: 200
+          nullable: true
+          type: string
+        price:
+          nullable: true
+          type: integer
+      type: object
+    Purchase:
+      properties:
+        count:
+          nullable: true
+          type: integer
+        date:
+          format: date-time
+          nullable: true
+          type: string
+        id:
+          type: integer
+        name:
+          maxLength: 200
+          nullable: true
+          type: string
+        price:
+          nullable: true
+          type: integer
+        user_id:
+          nullable: true
+          type: integer
+      type: object
+    Shop:
+      properties:
+        address:
+          maxLength: 200
+          nullable: true
+          type: string
+        id:
+          type: integer
+        name:
+          maxLength: 200
+          nullable: true
+          type: string
+        phone:
+          maxLength: 20
+          nullable: true
+          type: string
+      type: object
+info:
+  title: ShopService API
+  version: 0.0.1
+openapi: 3.0.0
+paths:
+  /api/shop/create:
+    post:
+      description: Create shop
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateShop'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shop'
+          description: OK
+        '400':
+          description: Bad request
+        '409':
+          description: Shop with this name already exist
+        default:
+          description: Unexpected error
+  /api/shop/{shop_id}:
+    get:
+      description: Get shop by ID
+      parameters:
+      - in: path
+        name: shopID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shop'
+          description: OK
+        '400':
+          description: Bad request
+        '404':
+          description: Shop not found
+        default:
+          description: Unexpected error
+  /api/shop/{shop_id}/product:
+    post:
+      description: Add product to shop
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProduct'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Product'
+                type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Shop not found
+        '409':
+          description: Product already exists
+        default:
+          description: Unexpected error
+    get:
+      description: Get products from shop
+      parameters:
+      - in: path
+        name: shopID
+        required: true
+        schema:
+          type: integer
+      - in: query
+        name: categoryName
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Product'
+                type: array
+          description: OK
+        '400':
+          description: Bad request
+        '404':
+          description: Shop not found
+        default:
+          description: Unexpected error
+  /api/shop/{shop_id}/history:
+    get:
+      description: History of purchases in shop
+      parameters:
+      - in: path
+        name: shopID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Purchase'
+                type: array
+          description: OK
+        '400':
+          description: Bad request
+        '404':
+          description: Shop not found
+        default:
+          description: Unexpected error
+  /api/shop/{shop_id}/delivery: {}
+  /api/shop/buy:
+    get:
+      description: Buy products from shop
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuyInput'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuyOutput'
+          description: OK
+        '400':
+          description: Bad request
+        '404':
+          description: Shop not found
+        default:
+          description: Unexpected error

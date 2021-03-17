@@ -3,15 +3,15 @@ from marshmallow import Schema, fields, validate
 
 class CreateProductSchema(Schema):
     name = fields.String()
-    price = fields.Integer()
-    count = fields.Integer()
+    price = fields.Integer(validate=validate.Range(min=1))
+    count = fields.Integer(validate=validate.Range(min=0))
     description = fields.String(default=None)
     category = fields.String()
 
 
 class CreatePurchaseSchema(Schema):
     name = fields.String()
-    count = fields.Integer()
+    count = fields.Integer(validate=validate.Range(min=1))
 
 
 class CreateShopSchema(Schema):
@@ -22,7 +22,7 @@ class CreateShopSchema(Schema):
 
 class DeliveryProductSchema(Schema):
     name = fields.String()
-    count = fields.Integer()
+    count = fields.Integer(validate=validate.Range(min=1))
 
 
 class BuyInputSchema(Schema):

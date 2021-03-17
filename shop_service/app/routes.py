@@ -90,7 +90,7 @@ def get_shop(shop_id):
 
 
 @bp.route("/shop/<int:shop_id>/product", methods=["POST"])
-@use_args({"products": fields.Nested(CreateProductSchema, many=True)}, location="json")
+@use_args(CreateProductSchema, location="json")
 def add_product(args, shop_id):
     """
     Add product to shop
@@ -107,7 +107,7 @@ def add_product(args, shop_id):
             application/json:
               schema:
                 type: array
-                items: PurchaseSchema
+                items: ProductSchema
         '400':
           description: Bad request
         '404':
@@ -121,15 +121,14 @@ def add_product(args, shop_id):
     if shop is None:
         return jsonify(message="Shop not found"), 404
     try:
-        for p in args["products"]:
-            product = product_schema.load(p)
-            product.shop = shop
-            db.session.add(product)
+        product = product_schema.load(args)
+        product.shop = shop
+        db.session.add(product)
     except IntegrityError:
         db.session.rollback()
         return jsonify(message="Product already exists"), 409
     db.session.commit()
-    return products_schema.dump(shop.products)
+    return jsonify(products=products_schema.dump(shop.products))
 
 
 @bp.route("/shop/<int:shop_id>/history", methods=["GET"])
