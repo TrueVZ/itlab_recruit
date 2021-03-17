@@ -1,9 +1,9 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
 
 class CreatePurchaseSchema(Schema):
     name = fields.String()
-    count = fields.Integer()
+    count = fields.Integer(strict=True, validate=validate.Range(min=1))
 
 
 class CreateCheckSchema(Schema):

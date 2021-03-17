@@ -38,6 +38,7 @@ components:
     CreatePurchase:
       properties:
         count:
+          minimum: 1
           type: integer
         name:
           type: string
@@ -82,12 +83,14 @@ paths:
   /api/user/create:
     post:
       description: Create user
-      parameters:
-      - in: path
-        name: username
-        required: true
-        schema:
-          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  type: string
+              type: object
       responses:
         '200':
           content:
@@ -106,7 +109,7 @@ paths:
       description: Get user by ID
       parameters:
       - in: path
-        name: userID
+        name: user_id
         required: true
         schema:
           type: integer
@@ -166,15 +169,23 @@ paths:
       description: Change category purchase
       parameters:
       - in: path
-        name: userID
+        name: user_id
         required: true
         schema:
           type: integer
       - in: path
-        name: categoryName
+        name: purchase_id
         required: true
         schema:
-          type: string
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                category:
+                  type: string
+              type: object
       responses:
         '200':
           content:

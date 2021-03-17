@@ -30,6 +30,7 @@ def add_shop(args):
     ---
     post:
       description: Create shop
+      response:
       requestBody:
         content:
           application/json:

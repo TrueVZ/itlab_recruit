@@ -25,12 +25,14 @@ def add_user(args):
     ---
     post:
       description: Create user
-      parameters:
-      - name: username
-        required: true
-        in: path
-        schema:
-          type: string
+      requestBody:
+          content:
+              application/json:
+                  schema:
+                    type: object
+                    properties:
+                        username:
+                          type: string
       responses:
         '200':
           description: OK
@@ -62,7 +64,7 @@ def get_user_by_id(user_id):
     get:
       description: Get user by ID
       parameters:
-      - name: userID
+      - name: user_id
         required: true
         in: path
         schema:
@@ -149,7 +151,7 @@ def add_check(args, user_id):
     print(args)
     req = requests.put(f"http://shop-service:5001/api/shop/buy", json=args)
     if req.status_code != 200:
-        return jsonify(message=req.json()), req.status_code
+        return req.json(), req.status_code
     req_data = req.json()
     check = check_schema.load(req_data)
     check.customer = user
@@ -167,16 +169,24 @@ def change_category(args, user_id, purchase_id):
     put:
       description: Change category purchase
       parameters:
-      - name: userID
+      - name: user_id
         required: true
         in: path
         schema:
           type: integer
-      - name: categoryName
+      - name: purchase_id
         required: true
         in: path
         schema:
-          type: string
+          type: integer
+      requestBody:
+          content:
+              application/json:
+                  schema:
+                    type: object
+                    properties:
+                        category:
+                          type: string
       responses:
         '200':
           description: OK
@@ -191,8 +201,9 @@ def change_category(args, user_id, purchase_id):
           description: Unexpected error
     """
     purchase = Purchase.query.get(purchase_id)
-    if purchase is None:
-        return jsonify(message="Purchases not found"), 404
+    user = User.query.get(user_id)
+    if purchase is None or User is not None:
+        return jsonify(message="Purchase or User not found"), 404
     purchase.category = args["category"]
     db.session.commit()
     return purchase_schema.dump(purchase)

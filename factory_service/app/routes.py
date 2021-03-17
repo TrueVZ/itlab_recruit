@@ -66,8 +66,7 @@ def add_product(args, factory_id):
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: '#/components/schemas/Product'
+                items: ProductSchema
         '400':
           description: Bad request
         '404':
@@ -105,8 +104,8 @@ def get_product(factory_id):
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: '#/components/schemas/Product'
+                items: ProductSchema
+
         '400':
           description: Bad request
         '404':

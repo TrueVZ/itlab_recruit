@@ -31,17 +31,20 @@ components:
         category:
           type: string
         count:
+          minimum: 0
           type: integer
         description:
           type: string
         name:
           type: string
         price:
+          minimum: 1
           type: integer
       type: object
     CreatePurchase:
       properties:
         count:
+          minimum: 1
           type: integer
         name:
           type: string
@@ -157,7 +160,7 @@ paths:
       description: Get shop by ID
       parameters:
       - in: path
-        name: shopID
+        name: shop_id
         required: true
         schema:
           type: integer
@@ -177,6 +180,12 @@ paths:
   /api/shop/{shop_id}/product:
     post:
       description: Add product to shop
+      parameters:
+      - in: path
+        name: shop_id
+        required: true
+        schema:
+          type: integer
       requestBody:
         content:
           application/json:
@@ -184,12 +193,11 @@ paths:
               $ref: '#/components/schemas/CreateProduct'
       responses:
         '200':
-          description: Ok
           content:
             application/json:
               schema:
                 items:
-                  $ref: '#/components/schemas/Purchase'
+                  $ref: '#/components/schemas/Product'
                 type: array
         '400':
           description: Bad request
@@ -203,12 +211,12 @@ paths:
       description: Get products from shop
       parameters:
       - in: path
-        name: shopID
+        name: shop_id
         required: true
         schema:
           type: integer
       - in: query
-        name: categoryName
+        name: category
         required: false
         schema:
           type: string
@@ -232,7 +240,7 @@ paths:
       description: History of purchases in shop
       parameters:
       - in: path
-        name: shopID
+        name: shop_id
         required: true
         schema:
           type: integer
