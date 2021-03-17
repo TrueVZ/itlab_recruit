@@ -40,9 +40,7 @@ def add_user(args):
             application/json:
               schema: UserSchema
         '400':
-          description: Bad request
-        '404':
-          description: User not found
+          description: User already exist
         default:
           description: Unexpected error
     """
@@ -53,7 +51,7 @@ def add_user(args):
         return user_schema.dump(user)
     except IntegrityError:
         db.session.rollback()
-        return jsonify({"message": "Username blocked"}), 400
+        return jsonify({"message": "User already exist"}), 400
 
 
 @bp.route("/user/<int:user_id>", methods=["GET"])
@@ -158,6 +156,35 @@ def add_check(args, user_id):
     db.session.add(check)
     db.session.commit()
     return check_schema.dump(check)
+
+
+@bp.route("/user/<int:user_id>/checks", methods=['GET'])
+def get_checks(user_id):
+    """
+    Get checks user
+    ---
+    get:
+      description: Get checks
+      parameters:
+      - name: userID
+        required: true
+        in: path
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: CheckSchema
+
+    """
+    user = User.query.get(user_id)
+    if user is None:
+        return jsonify(message="User not found"), 404
+    return jsonify(checks=checks_schema.dump(user.checks))
 
 
 @bp.route("/user/<int:user_id>/purchases/<int:purchase_id>", methods=["PUT"])

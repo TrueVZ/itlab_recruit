@@ -22,11 +22,12 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
+        exclude = ("checks",)
 
     checks = ma.Nested(CheckSchema, many=True)
 
 
-user_schema = UserSchema()
+user_schema = UserSchema(only=("id", "username"))
 users_schema = UserSchema(many=True, only=("id", "username"))
 check_schema = CheckSchema()
 checks_schema = CheckSchema(many=True)
